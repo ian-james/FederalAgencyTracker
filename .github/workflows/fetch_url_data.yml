@@ -19,15 +19,17 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install Deps
-        run: |
-          pip install -r requirements.txt
+      - name: Install Poetry
+        run : |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
+      - name: Install Deps
+        run: poetry install --no-interaction --no-root
 
       - name: Run Script
         env:
           TARGET_URL: null
-        run: |
-          python ./src/requestMe.py 
+        run: poetry run pytest -v
 
 
