@@ -1,0 +1,15 @@
+program_name: "Federal Agent"
+version: "0.01"
+author: "James Fraser"
+parameters:
+  search_args:
+    exit_on_first: False,
+    files: [
+      "test_patterns.txt" ,
+      "test_regex"
+    ]
+  results_directory_args:
+    use_date: True,
+    format: "YYYY-MM-DD",
+    filename: """
+

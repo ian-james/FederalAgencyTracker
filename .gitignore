@@ -1,0 +1,72 @@
+# --------------------
+# Python
+# --------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+.eggs/
+*.log
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+*.pyd
+*.pyo
+*.pdb
+*.tmp
+
+# Unit test / coverage reports
+.coverage
+.tox/
+.nox/
+.pytest_cache/
+htmlcov/
+.mypy_cache/
+.dmypy.json
+.pyre/
+.pytype/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb.json
+
+# --------------------
+# Poetry
+# --------------------
+# If you use poetry.lock, keep it tracked
+# (recommended, for reproducible installs).
+# Uncomment if you *don’t* want it in Git:
+# poetry.lock
+
+# Cache
+.poetry/
+
+# --------------------
+# PyCharm / IntelliJ IDEA
+# --------------------
+.idea/
+*.iml
+
+# --------------------
+# OS files
+# --------------------
+.DS_Store
+Thumbs.db
+
+# --------------------
+# Build / Dist
+# --------------------
+build/
+dist/
+*.manifest
+*.spec
+
