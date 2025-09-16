@@ -1,6 +1,6 @@
 name: Run Fetch JSON
 
-on: 
+on:
   push:
   workflow_dispatch:
   schedule:
@@ -14,13 +14,13 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v5
 
-      - name: Setup up Python
+      - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
       - name: Install Poetry
-        run : |
+        run: |
           curl -sSL https://install.python-poetry.org | python3 -
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
@@ -29,7 +29,6 @@ jobs:
 
       - name: Run Script
         env:
-          TARGET_URL: null
-        run: poetry run pytest -v
-
+          TARGET_URL: ""
+        run: poetry run python src/test_main.py
 
