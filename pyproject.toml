@@ -13,10 +13,14 @@ dependencies = [
     "pymupdf (>=1.26.4,<2.0.0)",
     "requests (>=2.32.5,<3.0.0)",
     "beautifulsoup4 (>=4.13.5,<5.0.0)",
-    "tqdm (>=4.67.1,<5.0.0)"
+    "tqdm (>=4.67.1,<5.0.0)",
 ]
 
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.2"
+

@@ -1,67 +1,57 @@
-# gov_pdf_grabber.py
+import sys
 from pathlib import Path
 from app_arguments import build_parser
 from downloader import download_pdf
 from pattern_files import load_patterns_from_file
 from searching import SearchContext, search_pdf_text
-import json
-
-def load_fr_data( dataObj ):
-    # Look for the keys
-    # document_number
-    # title
-    # pdf_url
-    # publication_date
-    pass
 
 
-def load_data_master_list(filename):
-    # Load CSV File
-    pass
+def main(argv=None) -> None:
+    """
+    Main entry point for the CLI. Can accept an optional argv list for testing.
+    """
+    ap = build_parser()
+    args = ap.parse_args(argv)
 
-def load_fr_website_data( filename ):
+    out_dir = Path(args.out_dir)
+    filename = args.url.split("/")[-1]
+    out_path = out_dir / filename
 
-    # Load the JSON file from the directory
-    pass
+    # Download only if not present or overwrite is specified
+    pdf_path = out_path
+    if not out_path.exists() or args.overwrite:
+        pdf_path = download_pdf(
+            args.url,
+            out_dir=args.out_dir,
+            timeout=args.timeout,
+            overwrite=args.overwrite,
+        )
 
+    patterns = load_patterns_from_file(args.targets)
+    if not patterns:
+        print("No patterns to search for. Exiting.")
+        return
 
-def identify_unique_files( masterDataList, currentDataList):
-    # Check the masterDataList file ids vs the currentDataList ids
-    # Return a list of unique IDS that are in current Data List but not master
-    pass
+    matches = search_pdf_text(
+        search_context=SearchContext(
+            pdf_path=pdf_path,
+            ignore_case=not args.case_sensitive,
+            exit_on_first=False,
+            patterns=patterns,
+            snippet_length=args.snippet_length,
+        ),
+        results_file=Path(args.results_file) if args.results_file else None,
+    )
 
-def search_dataframe( searchContext, matchAction, dataframe ):
+    if not matches:
+        print(f"No matches found in {pdf_path}.")
+        return
 
-    # For the search context, search data
+    print(f"Found {len(matches)} matches in {pdf_path}:")
+    for m in matches:
+        print(f"- p.{m['page']:>3} | {m['pattern']!r} | …{m['snippet']}…")
 
-    # if Foundo
-        # DO Match Actions
-
-    # Else
-        # return None or similar for context.
-    pass
-
-def search_datafiles( data ):
-    # Setup MatchesResults
-    # Return Match Results
-    pass
-
-
-def process_match_results( matchResults ):
-
-    # FOr the Match actions perform for each matchResult
-        ## Log
-        ## Print
-        ## or
-        ## Classify
-        ## Agent Evaluation
-        ## Notify
-    pass
-
-
-def main():
-    pass
 
 if __name__ == "__main__":
-    url = "https://www.federalregister.gov/"
-    main()
+    # Use real sys.argv[1:] when run as a script
+    main(sys.argv[1:])

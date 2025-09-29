@@ -20,7 +20,6 @@ class SearchContext:
     snippet_length: int = 50
     page_start: Optional[int] = None   # 1-based inclusive
     page_end: Optional[int] = None     # 1-based inclusive
-
     # You can add more knobs later (e.g., max_matches, whole_word, etc.)
 
 
