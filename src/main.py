@@ -5,7 +5,6 @@ from downloader import download_pdf
 from pattern_files import load_patterns_from_file
 from searching import SearchContext, search_pdf_text
 
-
 def main(argv=None) -> None:
     """
     Main entry point for the CLI. Can accept an optional argv list for testing.

@@ -11,7 +11,7 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--timeout", type=float, default=60.0, help="HTTP timeout (seconds)")
     ap.add_argument("--targets",
                     type=Path,
-                    default=Path("./config/test_regex.txt"),
+                    default=Path("./search_args/test_regex.txt"),
                     help="File with patterns to search for"
     )
     ap.add_argument("--case-sensitive", action="store_true", help="Case sensitive search")
