@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-from __future__ import annotations
-
 import argparse, io, json, tempfile
 from pathlib import Path
 from typing import Dict, Any, Iterable, List, Optional
@@ -11,7 +9,6 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from tqdm import tqdm
 
-# ✅ your modules
 from searching import SearchContext, search_pdf_text
 from pattern_files import load_patterns_from_file
 

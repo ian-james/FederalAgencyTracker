@@ -6,7 +6,7 @@ parameters:
     exit_on_first: False,
     files: [
       "test_patterns.txt" ,
-      "test_regex"
+      "test_regex.txt"
     ]
   results_directory_args:
     use_date: True,
