@@ -150,7 +150,7 @@ def setup_args() -> argparse.Namespace:
                         help="API returns at most ~2000 results per query; bump pages if needed")
     ap.add_argument("--tz", default="America/Glace_Bay",
                         help="Your local timezone for 'today/yesterday' (IANA name)")
-    ap.add_argument("--outdir", default="../results",
+    ap.add_argument("--outdir", default="./results",
                         help="Base output directory; script creates a dated subfolder here")
     return ap.parse_args()
 

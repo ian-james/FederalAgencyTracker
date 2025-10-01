@@ -65,7 +65,7 @@ def setup_args() -> argparse.Namespace:
     ap.add_argument("--case_sensitive", action="store_true", help="Default: ignore case")
     ap.add_argument("--snippet", type=int, default=80, help="Snippet padding chars")
     ap.add_argument("--exit_on_first", action="store_true", help="Stop scanning a PDF after first hit")
-    ap.add_argument("--outdir", default="../results", help="Base output dir (dated subfolder created)")
+    ap.add_argument("--outdir", default="./results", help="Base output dir (dated subfolder created)")
     ap.add_argument("--tz", default="America/Glace_Bay", help="Timezone for dated folder")
     ap.add_argument("--max", type=int, default=None, help="Max docs to consider")
     ap.add_argument("--timeout", type=float, default=60.0)
