@@ -13,7 +13,6 @@ Examples:
   poetry run python fr_new_docs.py --since 2025-09-01 --agency "Environmental Protection Agency" -o epa.jsonl
 """
 
-from __future__ import annotations
 import argparse, json, time
 from typing import Iterable
 import pendulum
@@ -43,6 +42,47 @@ def make_session() -> requests.Session:
     s.mount("http://", HTTPAdapter(max_retries=retry))
     return s
 
+
+def get_default_fields() -> list[str]:
+    return [
+        "document_number",
+        "title",
+        "abstract",
+        "html_url",
+        "pdf_url",
+        "publication_date",
+        "agencies",
+        "type"
+    ]
+
+def setup_params(
+    since: str,
+    until: str | None,
+    agencies: list[str] | None,
+    per_page: int,
+    page: int,
+    fields: list[str],
+):
+    params = {
+        "order": "newest",
+        "per_page": per_page,
+        "page": page,
+        # Date filters
+        "conditions[publication_date][gte]": since,
+    }
+    if until:
+        params["conditions[publication_date][lte]"] = until
+    # ask only for fields we need
+    for f in fields:
+        params.setdefault("fields[]", []).append(f)
+    # agencies filter (repeat param)
+    if agencies:
+        for a in agencies:
+            # repeating the same key is fine; requests encodes it as multiple query params
+            params.setdefault("conditions[agencies][]", []).append(a)
+
+    return params
+
 def fetch_new_documents(
     session: requests.Session,
     since: str,
@@ -57,28 +97,10 @@ def fetch_new_documents(
     API returns at most ~2000 results per query (max_pages*per_page). Use tighter date windows for more.
     """
     page = 1
-    fields = [
-        "document_number", "title", "abstract",
-        "html_url", "pdf_url", "publication_date", "agencies", "type"
-    ]
+    fields = get_default_fields()
     while page <= max_pages:
-        params = {
-            "order": "newest",
-            "per_page": per_page,
-            "page": page,
-            # Date filters
-            "conditions[publication_date][gte]": since,
-        }
-        if until:
-            params["conditions[publication_date][lte]"] = until
-        # ask only for fields we need
-        for f in fields:
-            params.setdefault("fields[]", []).append(f)
-        # agencies filter (repeat param)
-        if agencies:
-            for a in agencies:
-                # repeating the same key is fine; requests encodes it as multiple query params
-                params.setdefault("conditions[agencies][]", []).append(a)
+
+        params = setup_params(since, until, agencies, per_page, page, fields)
 
         r = session.get(DOCS_URL, params=params, timeout=30)
         r.raise_for_status()
@@ -113,22 +135,28 @@ def parse_date_arg(s: str, tz: str) -> str:
         return d.to_date_string()
     # assume YYYY-MM-DD
     return pendulum.parse(s).to_date_string()
-def main():
-    parser = argparse.ArgumentParser(description="Fetch newest Federal Register documents via API")
-    parser.add_argument("-o", "--output", default="fr_new.jsonl", help="Output JSONL filename (not path)")
-    parser.add_argument("--since", default="yesterday",
+
+
+def setup_args() -> argparse.Namespace:
+    ap = argparse.ArgumentParser(description="Fetch newest Federal Register documents via API")
+    ap.add_argument("-o", "--output", default="fr_new.jsonl", help="Output JSONL filename (not path)")
+    ap.add_argument("--since", default="yesterday",
                         help="Earliest publication_date (YYYY-MM-DD | 'yesterday' | 'today')")
-    parser.add_argument("--until", default=None,
+    ap.add_argument("--until", default=None,
                         help="Latest publication_date (YYYY-MM-DD); default = open-ended (today)")
-    parser.add_argument("--agency", action="append", help="Filter by agency name (repeatable)")
-    parser.add_argument("--per_page", type=int, default=1000)
-    parser.add_argument("--max_pages", type=int, default=2,
+    ap.add_argument("--agency", action="append", help="Filter by agency name (repeatable)")
+    ap.add_argument("--per_page", type=int, default=1000)
+    ap.add_argument("--max_pages", type=int, default=2,
                         help="API returns at most ~2000 results per query; bump pages if needed")
-    parser.add_argument("--tz", default="America/Glace_Bay",
+    ap.add_argument("--tz", default="America/Glace_Bay",
                         help="Your local timezone for 'today/yesterday' (IANA name)")
-    parser.add_argument("--outdir", default="../results",
+    ap.add_argument("--outdir", default="../results",
                         help="Base output directory; script creates a dated subfolder here")
-    args = parser.parse_args()
+    return ap.parse_args()
+
+def main():
+
+    args = setup_args()
 
     # Resolve dates
     since = parse_date_arg(args.since, args.tz)
